@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thư viện Hakor</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow-x: hidden;
+      color: white;
+    }
+
+    /* Parallax background */
+    .parallax {
+      background: url("https://preview.redd.it/mambo-v0-73hg0tx6ct4f1.jpeg?width=360&auto=webp&s=43a022bad3727cdcd625ed5a55fa82fec57b5004")
+                  no-repeat center center;
+      background-size: cover;
+      background-attachment: fixed;
+      min-height: 100vh;
+      width: 100%;
+      padding-bottom: 100px;
+    }
+
+    /* Glass effect */
+    .glass {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    /* Header */
+    .header {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      text-align: center;
+      animation: fadeZoom 1s ease forwards;
+    }
+
+    .header h1 {
+      margin: 0 0 15px;
+      font-size: 30px;
+      text-shadow: 0 2px 5px rgba(0,0,0,0.7);
+    }
+
+    /* Search box */
+    .search-box {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .search-box input {
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      width: 60%;
+      max-width: 400px;
+    }
+
+    .search-box button {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 8px;
+      background: dodgerblue;
+      color: white;
+      cursor: pointer;
+      transition: 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .search-box button:hover {
+      background: deepskyblue;
+      transform: scale(1.05);
+    }
+
+    /* Menu */
+    .menu-wrapper {
+      padding: 15px 10px;
+      margin: 20px auto;
+      max-width: 800px;
+    }
+
+    .menu-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .menu-bar a {
+      color: white;
+      text-decoration: none;
+      padding: 10px 18px;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 8px;
+      font-size: 15px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .menu-bar a:hover {
+      background: dodgerblue;
+      box-shadow: 0 0 10px dodgerblue;
+      transform: scale(1.05);
+    }
+
+    /* Scroll animation */
+    .hidden {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s ease-out;
+    }
+    .show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Menu xuất hiện lần lượt */
+    .menu-bar.show a {
+      animation: fadeUp 0.7s forwards;
+    }
+    .menu-bar.show a:nth-child(1) { animation-delay: 0.2s; }
+    .menu-bar.show a:nth-child(2) { animation-delay: 0.4s; }
+    .menu-bar.show a:nth-child(3) { animation-delay: 0.6s; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeZoom {
+      from { opacity: 0; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* Nội dung */
+    .content {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      animation: fadeZoom 1.2s ease forwards;
+    }
+
+    .content h2, .content p {
+      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+    }
+
+    /* Cài đặt (bánh răng) */
+    .settings-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(0,0,0,0.6);
+      border-radius: 50%;
+      width: 55px;
+      height: 55px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 26px;
+      color: white;
+      cursor: pointer;
+      transition: transform 0.75s linear;
+      z-index: 1000;
+    }
+    .settings-btn.active {
+      transform: rotate(180deg);
+    }
+
+    .settings-menu {
+      position: fixed;
+      bottom: 90px;
+      right: 20px;
+      width: 220px;
+      background: rgba(0,0,0,0.7);
+      padding: 15px;
+      border-radius: 15px;
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .settings-menu button {
+      padding: 10px;
+      border: none;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.1);
+      color: white;
+      cursor: pointer;
+      transition: 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .settings-menu button:hover {
+      background: dodgerblue;
+      box-shadow: 0 0 10px dodgerblue;
+      transform: scale(1.05);
+    }
+
+    /* Tắt animation (giữ hover) */
+    body.no-anim * {
+      animation: none !important;
+      transition: none !important;
+    }
+    body.no-anim .menu-bar a:hover,
+    body.no-anim .settings-menu button:hover {
+      transform: scale(1.05);
+      background: dodgerblue;
+      box-shadow: 0 0 10px dodgerblue;
+    }
+
+    /* Hiệu ứng click đom đóm xanh (nút/menu) */
+    .firefly {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background: dodgerblue;
+      border-radius: 50%;
+      pointer-events: none;
+      opacity: 0.8;
+      animation: fireflyAnim 1s ease-out forwards;
+    }
+
+    @keyframes fireflyAnim {
+      from { transform: scale(0.5); opacity: 0.8; }
+      to { transform: scale(3); opacity: 0; }
+    }
+
+    /* Đom đóm tím khi click nền */
+    .firefly-tap {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: #cc99ff;
+      border-radius: 50%;
+      pointer-events: none;
+      opacity: 0.8;
+      animation: fireflyTapAnim 1.2s ease-out forwards;
+    }
+
+    @keyframes fireflyTapAnim {
+      from { transform: scale(1) translate(0,0); opacity: 0.8; }
+      to { transform: scale(0.5) translate(var(--x), var(--y)); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nền parallax -->
+  <div class="parallax">
+
+    <!-- Header -->
+    <header class="glass header">
+      <h1>📖 Thư viện Hakor</h1>
+      <div class="search-box">
+        <input type="text" placeholder="🔍 Tìm kiếm light novel..." />
+        <button>Tìm kiếm</button>
+      </div>
+    </header>
+
+    <!-- Menu -->
+    <div class="menu-wrapper glass hidden">
+      <div class="menu-bar">
+        <a href="index.html">🏠 Trang chủ</a>
+        <a href="fandich.html">🈶 Fan Dịch</a>
+        <a href="#">📚 Light Novel</a>
+      </div>
+    </div>
+
+    <!-- Nội dung -->
+    <div class="content glass hidden">
+      <h2>Xin chào!</h2>
+      <p>Trang web lưu trữ light novel fan dịch, giao diện đơn giản dễ đọc.</p>
+    </div>
+  </div>
+
+  <!-- Nút cài đặt -->
+  <div class="settings-btn" id="settingsBtn">⚙️</div>
+  <div class="settings-menu glass" id="settingsMenu">
+    <button id="toggleTheme">🌙 Đổi chế độ sáng/tối</button>
+    <button id="toggleAnim">✨ Bật/Tắt animation</button>
+  </div>
+
+  <script>
+    // Scroll animation
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("show");
+          if (entry.target.querySelector('.menu-bar')) {
+            entry.target.querySelector('.menu-bar').classList.add("show");
+          }
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.2 });
+
+    document.querySelectorAll('.hidden').forEach(el => observer.observe(el));
+
+    // Settings toggle
+    const settingsBtn = document.getElementById("settingsBtn");
+    const settingsMenu = document.getElementById("settingsMenu");
+
+    settingsBtn.addEventListener("click", () => {
+      settingsBtn.classList.toggle("active");
+      settingsMenu.style.display =
+        settingsMenu.style.display === "flex" ? "none" : "flex";
+    });
+
+    // Dark/Light mode toggle
+    document.getElementById("toggleTheme").addEventListener("click", () => {
+      document.body.classList.toggle("dark-mode");
+    });
+
+    // Animation toggle
+    document.getElementById("toggleAnim").addEventListener("click", () => {
+      document.body.classList.toggle("no-anim");
+    });
+
+    // Hiệu ứng đom đóm xanh khi click nút/menu
+    function addFireflyEffect(e) {
+      const btn = e.currentTarget;
+      const circle = document.createElement("span");
+      circle.classList.add("firefly");
+
+      const rect = btn.getBoundingClientRect();
+      circle.style.left = (e.clientX - rect.left - 6) + "px";
+      circle.style.top = (e.clientY - rect.top - 6) + "px";
+
+      btn.appendChild(circle);
+      setTimeout(() => circle.remove(), 1000);
+    }
+
+    document.querySelectorAll("button, .menu-bar a").forEach(el => {
+      el.addEventListener("click", addFireflyEffect);
+    });
+
+    // Hiệu ứng đom đóm tím khi click nền
+    document.body.addEventListener("click", (e) => {
+      if (e.target.closest("button, .menu-bar a, .settings-btn")) return;
+
+      for (let i = 0; i < 4; i++) {
+        const dot = document.createElement("span");
+        dot.classList.add("firefly-tap");
+
+        dot.style.left = e.pageX + "px";
+        dot.style.top = e.pageY + "px";
+
+        const angle = Math.random() * 2 * Math.PI;
+        const distance = 40 + Math.random() * 40;
+        const x = Math.cos(angle) * distance + "px";
+        const y = Math.sin(angle) * distance + "px";
+        dot.style.setProperty("--x", x);
+        dot.style.setProperty("--y", y);
+
+        document.body.appendChild(dot);
+        setTimeout(() => dot.remove(), 1200);
+      }
+    });
+  </script>
+</body>
+  </html>
+  
